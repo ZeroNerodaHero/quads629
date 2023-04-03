@@ -1,0 +1,185 @@
+:root{
+}
+#overlay_cont{
+    position: absolute;
+    z-index: 2;
+    height: 100%;
+    width: 100%;
+    
+    display: flex;
+    justify-content: center;
+}
+
+#overlay_scrollController{
+    position: absolute;
+    width: 90%;
+    height: 100dvh;
+}
+#overlay_scrollConstraint{
+    height: auto;
+}
+.overlayTemp{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.overlayTempBody{
+    width: 80%;
+    text-align: center;
+    height: 10dvh;
+    display: grid;
+    align-items: center;
+
+    background-color: white;
+    border: 1px black solid;
+}
+
+#overLayTopTemp{
+    top: 0;
+    left: 0;
+}
+#overLayTopTemp > div{
+    border-radius: 0px 0px 10px 10px ;
+}
+#overLayBotTemp{
+    bottom: 0;
+    left: 0;
+}
+#overLayBotTemp > div{
+    border-radius: 10px 10px 0px 0px;
+}
+
+#overlay_top{
+    padding-top: 21px;
+    background-color: white;
+    border-radius: 0% 0% 10px 10px;
+    margin-bottom: 7px;
+    border: 1px black solid;
+    border-top-width: 0px;
+    display: grid;
+    justify-content: center;
+    justify-items: center;
+}
+#newRequestCont{
+    margin-top: 7px;
+    text-align: center;
+}
+#overlay_bot{
+    background-color: white;
+    margin-top: 7px;
+    border-radius: 10px 10px 0px 0px;
+    border: 1px black solid;
+    border-bottom-width: 0px;
+
+    position: absolute;
+    bottom: 0;
+    height: 80dvh;
+    overflow: auto;
+}
+.overlayTempText{
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.requestCont{
+    display: grid;
+    justify-items: center;
+}
+.top_heading{
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 3px 7px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+
+#phoneNumInputSearch{
+}
+#phoneNumInputSearch > input{
+    width: 1rem;
+    text-align: center;
+    margin-right: 3px;
+}
+#phoneNumInputSearch:nth-child(3)::before{
+    content: "-";
+}
+.blackLineCont{
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 3px;
+    content: "";
+}
+.blackLine{
+    width: 50%;
+    height: 3px;
+    border-bottom: 3px black solid;
+    content: "";
+}
+
+.title{
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+#bottomContRow_1{
+    display: grid;
+    grid-template-columns: 80% auto;
+    align-items: center;
+}
+
+#bottomHeading{
+}
+#AG_picture {
+    width: 90%;
+    padding: 3px;
+    margin-top: 7px;
+}
+
+.formItem{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3px;
+}
+.formItem > div{
+    margin-right: 17px;
+}
+.formItem > input, textarea{
+    border: 1px black solid;
+    border-radius: 10px;
+    padding: 3px 7px;
+    background-color: rgba(0, 0, 0, 0.15);
+}
+.formItem > input:active,input:focus, textarea:active,textarea:focus{
+    background-color: transparent;
+}
+.form_subText{
+    font-size: 0.8rem;
+    font-style: italic;
+    padding-left: 11px;
+}
+#formImage{
+    display: flex;
+}
+.formImageCont{
+    aspect-ratio: 1 / 1;
+    width: 25%;
+    height: auto;
+    border: 1px black solid;
+}
+.formImageForm{
+    display: none;
+}
