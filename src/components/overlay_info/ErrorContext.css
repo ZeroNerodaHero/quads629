@@ -1,0 +1,33 @@
+#promptCont{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+#promptBkg{
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100dvh;
+    background-color: rgba(0, 0, 0, 0.4);
+    
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+#promptBodyCont{
+    border: 1px black solid;
+    background-color: red;
+    width: fit-content;
+    height: fit-content;
+    padding: 19px;
+}
+#promptTitle{
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+#promptContent{
+    padding: 4px;
+}

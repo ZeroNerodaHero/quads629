@@ -14,7 +14,7 @@
     $option = empty($hData["option"]) ? 0:$hData["option"];
 
     if($option == 0){
-        genNoParamInfo();
+        echo '{"code":0,"msg":"No command"}';
         die();
     }
     //search for a phone number
@@ -24,7 +24,7 @@
         if(empty($hData["phoneNum"])){
             $ret = '{"code":0,"msg":"Please insert a valid phone number"}';    
         } else{
-            $retOBJ = array("code"=>0)
+            $retOBJ = array("code"=>0);
             $que = "SELECT * FROM activeRequest WHERE phoneNum=".$hData["phoneNum"];
             $res = $conn->query($que);
             if($res->num_rows != 0){
@@ -47,27 +47,36 @@
     }
     //creates a request
     else if($option == 2){
-        if(empty($hData["first_name"]) || empty($hData["last_name"]) || 
+        if(empty($hData["name"]) || 
             empty($hData["phoneNum"]) || empty($hData["email"]) || 
-            empty($hData["locationX"]) || empty($hData["locationY"]) || 
-            empty($hData["location_string"])
+            //empty($hData["locationX"]) || empty($hData["locationY"]) || 
+            empty($hData["location"]) || empty($hData["descript"])
         ){
             $ret = '{"code":0,"msg":"Please fill the form completely"}';    
         } else{
-            addRequest($hData["first_name"],$hData["last_name"],
-                $hData["phoneNum"],$hData["email"],$hData["locationX"],
-                $hData["locationY"],$hData["location_string"]);
+            $code = addRequest($hData["name"],$hData["phoneNum"],$hData["email"],
+                $hData["location"],$hData["descript"]);
+            if($code == -1){
+                $ret = '{"code":0,"msg":"You have a request already"}';    
+            } else{
+                $ret = json_encode(array("code"=>1,
+                    "msg"=>"You have submited a request",
+                    "id"=>$code));    
+            }
         }
     }
-    function addRequest($first_name,$last_name,$phoneNum,$email,$locationX,
-        $locationY,$location_string){
+    function addRequest($name,$phoneNum,$email,$location,$descript){
             global $conn;
-            $que = "INSERT INTO activeRequest(
-                        first_name,last_name,phoneNum,email,locationX,
-                        locationY,location_string)
-                    VALUES('$first_name','$last_name','$phoneNum','$email',
-                            '$locationX','$locationY','$location_string')";
-            $conn->query();
+            $que = "SELECT * FROM activeRequest WHERE phoneNUm='$phoneNum'";
+            $res = $conn->query($que);
+            if($res->num_rows == 0){
+                $que = "INSERT INTO activeRequest(
+                            name,phoneNum,email,location,descript)
+                        VALUES('$name','$phoneNum','$email','$location','$descript')";
+                $conn->query($que);
+                return $conn->insert_id;
+            } 
+            return -1;
     }
     echo $ret;
 ?>

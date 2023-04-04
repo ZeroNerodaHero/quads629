@@ -1,7 +1,8 @@
 // react
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import "./Overlay.css"
-import ReactToPrint from "react-to-print";
+import apiRequest from '../apiRequest/apiRequest';
+import ErrorContext from './ErrorContext';
 
 function Overlay(props){
     const [overlayState,setOverlayState] = useState(0)
@@ -33,15 +34,15 @@ function Overlay(props){
 
 function OverlayTop(props){
     const [topState,setTopState] = useState(0)
+    const [userRequest,setUserRequest] = useState({})
     
-
     const nullState = (
         <div>
             <div className="requestCont">
                 <div className="top_heading">
                     Find my request
                 </div>
-                <PhoneInput setTopState={setTopState}/>
+                <PhoneInput setTopState={setTopState} setUserRequest={setUserRequest}/>
             </div>
             <div id="newRequestCont">
                 Or <br/>
@@ -53,7 +54,7 @@ function OverlayTop(props){
     const [topCont,setTopCont] = useState(nullState)
 
     useEffect(()=>{
-        if(topState === 1) setTopCont(<RequestState />)
+        if(topState === 1) setTopCont(<RequestState userRequest={userRequest}/>)
         if(topState === 2) setTopCont(<FormState />)
     },[topState])
 
@@ -70,6 +71,8 @@ function FormState(){
     const [email,setEmail] = useState("")
     const [location,setLocation] = useState("")
     const [descript,setDescript] = useState("")
+
+    const {errorObj, setErrorObj} = useContext(ErrorContext)
 
     return (
         <div>   
@@ -113,7 +116,25 @@ function FormState(){
                     </div>
                     <div className="formItem">
                         <div></div>
-                        <button onClick={()=>{}}>
+                        <button onClick={()=>{
+                            apiRequest("http://localhost:8080/","",
+                            {
+                                option: 2,
+                                name: name,
+                                phoneNum: phoneNum,
+                                email: email,
+                                location:location,
+                                descript:descript
+                            },
+                            "POST").then((data)=>{
+                                if(data["code"]!=0){
+                                    console.log("werks")
+                                } else{
+                                    console.log("doesn't werk")
+                                    setErrorObj({code:0,display:1})
+                                }
+                            })
+                        }}>
                             Submit
                         </button>
                     </div>
@@ -125,17 +146,30 @@ function FormState(){
 }
 
 function RequestState(props){
+    const [active,setActive] = useState(-1)
+    const [past,setPast] = useState(-1)
+    useEffect(()=>{
+        if(props.userRequest.activeRequest != undefined){
+            setActive(props.userRequest.activeRequest)
+        }
+        if(props.userRequest.oldRequest != undefined){
+            setPast(props.userRequest.oldRequest)
+        }
+    },[props.userRequest])
     const toPrint = useRef(null);
     return (
-        <div id="requesterInfo">
+        <div id="requesterInfo" onClick={()=>{console.log(props.userRequest)}}>
             <div id="currentRequest">
-                <div id="toPrint" ref={toPrint}>
-                    <div>Your current request: <b>123345</b></div>
-                    <div>Phone Number <b>408-888-1111</b></div>
-                    <div>Filed on: <b>Dec 31 2023 1:2:3</b></div>
-                    <div>Invoice amount: $100</div>
-                    <div>Rate: ***** [Review]</div>
-                </div>
+                {
+                    active == -1 ? <div /> :
+                    <div id="toPrint" ref={toPrint}>
+                        <div>Hello <b>{active["name"]}</b></div>
+                        <div>Phone Number <b>{active["phoneNum"]}</b></div>
+                        <div>Filed on: <b>{active["request_time"]}</b></div>
+                        <div>Status: {active["status"] == 0 ? "Not Seen Yet." : 
+                            "Seen. I should have called you or texted you."}</div>
+                    </div>
+                }
                 <button onClick={()=>{
                     var printComp = window.open("")
                     printComp.document.write(toPrint.current.innerHTML)
@@ -144,20 +178,22 @@ function RequestState(props){
                     printComp.print();
                 }}>Print</button>
             </div>
-            <div>
-                Old requests
-            </div>
+            {
+                past == -1 ? <div>You have no past jobs with AG Electrics</div> :
+                <div>
+                    Old requests. Listed by date. Press print to print the invoice and costs.
+                </div>
+            }
         </div>
     )
 }
 
 function PhoneInput(props){
     const [curPhonePos,setCurrentPhonePos] = useState(-1);
-    const phoneNum = new Array(9).fill(0);
+    const phoneNum = new Array(10).fill(0);
     const phoneNumParent = useRef(null);
 
     useEffect(()=>{
-        console.log(curPhonePos)
         if(curPhonePos >= 0){
             phoneNumParent.current.children[curPhonePos].focus();
         }
@@ -178,7 +214,20 @@ function PhoneInput(props){
                 }
                 console.log(phoneNum)
                 e.stopPropagation();
-                props.setTopState(1)
+
+                apiRequest("http://localhost:8080/","",
+                {
+                    option: 1,
+                    phoneNum: phoneNum
+                },
+                "POST").then((data)=>{
+                    if(data["code"]!=0){
+                        props.setUserRequest(data);
+                        props.setTopState(1)
+                } else{
+                        console.log("doesn't werk")
+                    }
+                })
             }}>Enter</button>
         </div>
     );
