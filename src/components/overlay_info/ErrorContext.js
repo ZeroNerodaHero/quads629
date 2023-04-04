@@ -4,12 +4,16 @@ import "./ErrorContext.css"
 const ErrorContext = createContext();
 
 function AbsolutePrompt(props){
-    const [promptObj,setPromptObj] = useState({code:1,display:0})
     const [showPrompt,setShowPrompt] = useState(0);
+
+    const [title,setTitle] = useState("Error")
+    const [content, setContent] = useState("Error")
+
     useEffect(()=>{
         if(props.promptObj.display != undefined && props.promptObj.display == 1) {
-            setPromptObj(props.promptObj)
             setShowPrompt(1)
+            setTitle(props.promptObj.title)
+            setContent(props.promptObj.content)
         }
     },[props.promptObj])
 
@@ -19,8 +23,8 @@ function AbsolutePrompt(props){
                 showPrompt == 0 ? <div/> :
                 <div id="promptBkg" onClick={()=>(setShowPrompt(0))}>
                     <div id="promptBodyCont" onClick={(e)=>{e.stopPropagation()}}>
-                        <div id="promptTitle">Test</div>
-                        <div id="promptContent">Test.</div>
+                        <div id="promptTitle">{title}</div>
+                        <div id="promptContent">{content}</div>
                     </div>
                 </div>
             }

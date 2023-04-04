@@ -59,9 +59,7 @@ function OverlayTop(props){
     },[topState])
 
     return (
-        <div id="overlay_top">
-            {topCont}
-        </div>
+        <div id="overlay_top">{topCont}</div>
     )
 }
 
@@ -72,6 +70,10 @@ function FormState(){
     const [location,setLocation] = useState("")
     const [descript,setDescript] = useState("")
 
+    const [formImages,setFormImages] = useState("")
+    const fileInput = useRef(null)
+    const [formImageCnt,setFormImageCnt] = useState(0)
+
     const {errorObj, setErrorObj} = useContext(ErrorContext)
 
     return (
@@ -79,30 +81,21 @@ function FormState(){
             <div className="requestCont">
                 <div className="top_heading">Get AG Electric's Help</div><br/>
                 <div id="formBody">
-                    <div className="formItem">
-                        <div>Name</div>
+                    <div className="formItem"><div>Name</div>
                         <input value={name} onChange={(e)=>{setName(e.target.value)}}/>
                     </div>
-                    <div className="formItem">
-                        <div>Phone Number</div>
+                    <div className="formItem"><div>Phone Number</div>
                         <input value={phoneNum} onChange={(e)=>{setPhoneNum(e.target.value)}}/> 
                     </div>
-                    <div className="form_subText">
-                        Primary Communication with me.
-                    </div>
-                    <div className="formItem">
-                        <div>Email</div>
+                    <div className="form_subText">Primary Communication with me.</div>
+                    <div className="formItem"><div>Email</div>
                         <input value={email} onChange={(e)=>{setEmail(e.target.value)}}/>
                     </div>
-                    <div className="form_subText">
-                        Used to send invoices.
-                    </div>
-                    <div className="formItem">
-                        <div>Location</div>
+                    <div className="form_subText">Used to send invoices.</div>
+                    <div className="formItem"><div>Location</div>
                         <input value={location} onChange={(e)=>{setLocation(e.target.value)}}/>
                     </div>
-                    <div className="formItem">
-                        <div>Description</div>
+                    <div className="formItem"><div>Description</div>
                         <textarea value={descript} onChange={(e)=>{setDescript(e.target.value)}}/>
                     </div>
                     <div className="form_subText">
@@ -110,8 +103,21 @@ function FormState(){
                     </div>
                     <div id="formImages">
                         <div className="formImageCont">
-                            <div className="formImageDisplay"></div>
-                            <input type="file" className="formImageForm" />
+                            <div className="formImageDisplay" onClick={()=>{
+                                fileInput.current.click()
+                            }}>
+                                {
+                                    formImages == "" ? <div/> :
+                                    <img className='formImageImg' src={formImages}/>
+                                }
+                            </div>
+                            <input type="file" className="formImageForm" ref={fileInput} 
+                                onChange={(e)=>{
+                                    var tmpUpload = e.target.files
+                                    if(tmpUpload != "" && tmpUpload[0] != null){
+                                        setFormImages(URL.createObjectURL(tmpUpload[0]))
+                                    }
+                                }}/>
                         </div>
                     </div>
                     <div className="formItem">
@@ -131,14 +137,14 @@ function FormState(){
                                     console.log("werks")
                                 } else{
                                     console.log("doesn't werk")
-                                    setErrorObj({code:0,display:1})
+                                    setErrorObj({code:0,display:1,title:"Failed to Add Request",
+                                        content:data["msg"]})
                                 }
                             })
                         }}>
                             Submit
                         </button>
                     </div>
-                    
                 </div>
             </div>
         </div>
@@ -148,6 +154,7 @@ function FormState(){
 function RequestState(props){
     const [active,setActive] = useState(-1)
     const [past,setPast] = useState(-1)
+
     useEffect(()=>{
         if(props.userRequest.activeRequest != undefined){
             setActive(props.userRequest.activeRequest)
@@ -159,13 +166,16 @@ function RequestState(props){
     const toPrint = useRef(null);
     return (
         <div id="requesterInfo" onClick={()=>{console.log(props.userRequest)}}>
+            <div className="requestHead">Current Request</div>
             <div id="currentRequest">
                 {
-                    active == -1 ? <div /> :
+                    active == -1 ? <div>You have no current requests</div> :
                     <div id="toPrint" ref={toPrint}>
                         <div>Hello <b>{active["name"]}</b></div>
                         <div>Phone Number <b>{active["phoneNum"]}</b></div>
                         <div>Filed on: <b>{active["request_time"]}</b></div>
+                        <div>Description: <br/><b>{active["descript"]}</b></div>
+                        <div>Photos Provided: <br/><b>{active["descript"]}</b></div>
                         <div>Status: {active["status"] == 0 ? "Not Seen Yet." : 
                             "Seen. I should have called you or texted you."}</div>
                     </div>
@@ -178,6 +188,7 @@ function RequestState(props){
                     printComp.print();
                 }}>Print</button>
             </div>
+            <div className="requestHead">Past Requests</div>
             {
                 past == -1 ? <div>You have no past jobs with AG Electrics</div> :
                 <div>
@@ -192,6 +203,8 @@ function PhoneInput(props){
     const [curPhonePos,setCurrentPhonePos] = useState(-1);
     const phoneNum = new Array(10).fill(0);
     const phoneNumParent = useRef(null);
+    const {errorObj, setErrorObj} = useContext(ErrorContext)
+
 
     useEffect(()=>{
         if(curPhonePos >= 0){
@@ -226,6 +239,8 @@ function PhoneInput(props){
                         props.setTopState(1)
                 } else{
                         console.log("doesn't werk")
+                        setErrorObj({code:0,display:1,title:"Failed to Find Phone Number",
+                                        content:data["msg"]})
                     }
                 })
             }}>Enter</button>
@@ -234,6 +249,7 @@ function PhoneInput(props){
 }
 
 function OverlayBottom(props){
+    const [displayAdmin,setDisplayAdmin] = useState(0)
     return (
         <div id="overlay_bot">
             <div id="bottomCont">
@@ -251,17 +267,66 @@ function OverlayBottom(props){
                         <b>About AG Electric</b>
                     </div>
                     <div className="bodyText">
-                        {"1000 ".repeat(1000)}
+                        {"1000 ".repeat(100)}
                     </div>
                 </div>
 
                 <div className="bottomGridItem">
                     <div className="headText">
-                        
                     </div>
                     <div className="bodyText">
                     </div>
                 </div>
+            </div>
+            <div onClick={()=>{setDisplayAdmin(displayAdmin ^ 1)}}>Admin Login</div>
+            <div id="adminPanelCont" style={{display:(displayAdmin == 0) ? "none" : "grid"}}
+                onClick={()=>{setDisplayAdmin(0)}}>
+                <AdminPanel />
+            </div>
+        </div>
+    )
+}
+
+function AdminPanel(props){
+    const [adminPasscode,setAdminPasscode] = useState("")
+    const [adminState,setAdminState] = useState(0);
+    const {errorObj, setErrorObj} = useContext(ErrorContext)
+
+    const nullState = (
+    <div>
+        <input value={adminPasscode} onChange={(e)=>{
+            setAdminPasscode(e.target.value)
+        }} />
+        <button onClick={(e)=>{
+            apiRequest("http://localhost:8080/","",
+            {
+                option: 2000,
+                passcode: adminPasscode
+            },
+            "POST").then((data)=>{
+                if(data["code"]!=0){
+                    props.setAdminState(1)
+            } else{
+                    setErrorObj({code:0,display:1,title:"Failed to Login",
+                                    content:data["msg"]})
+                }
+            })
+        }}>Login</button>
+    </div>);
+    const loginState = (
+        <div>
+            <div className='listRequests'>
+
+            </div>
+        </div>
+    );
+
+    return (
+        <div id="adminPanelBody" onClick={(e)=>{e.stopPropagation()}}>
+            <div id="adminPanelBodyCont">
+                <div className='top_heading'>Admin Login</div>
+                {adminState == 0 ? nullState :
+                    loginState}
             </div>
         </div>
     )

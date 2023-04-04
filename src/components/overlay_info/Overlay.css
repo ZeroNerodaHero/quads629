@@ -85,6 +85,7 @@
 .requestCont{
     display: grid;
     justify-items: center;
+    padding: 7px;
 }
 .top_heading{
     font-size: 1.5rem;
@@ -108,7 +109,7 @@ button {
 #phoneNumInputSearch > input{
     width: 1rem;
     text-align: center;
-    margin-right: 3px;
+    margin-right: 1px;
 }
 #phoneNumInputSearch:nth-child(3)::before{
     content: "-";
@@ -180,4 +181,40 @@ button {
 }
 .formImageForm{
     display: none;
+}
+.formImageDisplay{
+    height: 100%;
+    width: 100%;
+}
+.formImageImg{
+    height: 100%;
+    width: 100%;
+}
+.requestHead{
+    font-weight: bold;
+    text-decoration: underline;
+    margin-bottom: 3px;
+}
+
+#adminPanelCont{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 100vw;
+
+    display: grid;
+    background-color: rgba(0, 0, 0, 0.2);
+    justify-content: center;
+    align-items: center;
+}
+#adminPanelBody{
+    width: 80vw;
+    height: 50dvh;
+    background-color: red;
+    border: 1px black solid;
+    padding: 7px;
+}
+#adminPanelBodyCont{
+    text-align: center;
 }
