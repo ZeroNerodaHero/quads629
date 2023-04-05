@@ -130,7 +130,7 @@
         while($row = $res->fetch_assoc()){
             $retOBJ["requests"][] = $row;
         }
-        $ret = json_decode($retOBJ);
+        $ret = json_encode($retOBJ);
     }
 
     function addRequest($name,$phoneNum,$email,$location,$descript){

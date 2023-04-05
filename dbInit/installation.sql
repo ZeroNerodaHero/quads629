@@ -12,8 +12,8 @@ CREATE TABLE activeRequest(
 
     currentRequestId int NOT NULL AUTO_INCREMENT,
     status int DEFAULT 0,
-    expectedInvoice int,
-    expectedInvoiceString varchar(3000),
+    expectedInvoice int DEFAULT 0,
+    expectedInvoiceString varchar(3000) DEFAULT '{\"travel\":0,\"time\":0,\"material\":[]}',
     PRIMARY KEY(currentRequestId)
 );
 
